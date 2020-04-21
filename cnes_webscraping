@@ -1,0 +1,42 @@
+# Download data from CNES
+# http://cnes2.datasus.gov.br/Mod_Ind_Tipo_Leito.asp?
+
+cnes_webscraping <- function(estado,ibgeID,comp){
+  
+  if(!require(xml2)){
+    install.packages("xml2")
+    library(xml2)
+  }
+  
+  if(!exists("estado")){
+    estado="00"
+  }
+  
+  if(!exists("ibgeID")){
+    webpage_url <- paste0("http://cnes2.datasus.gov.br/Mod_Ind_Tipo_Leito.asp?VEstado=",estado)
+  }
+  
+  if(exists("ibgeID") & !exists("comp")){
+    webpage_url <- paste0("http://cnes2.datasus.gov.br/Mod_Ind_Tipo_Leito.asp?VEstado=",estado,"&VMun=",ibgeID)
+  }
+  
+  if(exists("estado") & exists("ibgeID") & exists("comp")){
+    webpage_url <- paste0("http://cnes2.datasus.gov.br/Mod_Ind_Tipo_Leito.asp?VEstado=",estado,"&VMun=",ibgeID,"&VComp=",comp)
+  }
+  webpage <- xml2::read_html(webpage_url)
+  cnes_table <- rvest::html_table(webpage,fill=T)[[1]] %>% 
+    tibble::as_tibble(.name_repair = "unique") # repair the repeated columns
+  
+  cnes_table <- cnes_table[max(grep("Codigo",cnes_table$X1)):(nrow(cnes_table)-3),1:5]
+  colnames(cnes_table) <- c("Codigo","Descrição","Existente","Sus","NaoSus")
+  cnes_table <- cnes_table[2:nrow(cnes_table),] %>% 
+    filter(Codigo!="TOTAL") %>% 
+    mutate(estado = estado,
+           ibgeID = ibgeID,
+           competencia = comp) %>% 
+    select(c(estado:competencia,Codigo:NaoSus))
+  
+  return(cnes_table)
+}
+
+cnes_webscraping(estado,ibgeID,comp)
