@@ -39,4 +39,10 @@ cnes_webscraping <- function(estado,ibgeID,comp){
   return(cnes_table)
 }
 
+# Run example
+
+estado <- 51
+ibgeID <- 510340
+comp <- 202003
+
 cnes_webscraping(estado,ibgeID,comp)
