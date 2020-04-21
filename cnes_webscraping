@@ -1,6 +1,10 @@
 # Download data from CNES
 # http://cnes2.datasus.gov.br/Mod_Ind_Tipo_Leito.asp?
 
+# estado = codigo do Estado
+# ibgeID = codigo do municipio (IBGE)
+# comp = competencia (ano e mês que os dados se referem, exemplo: março de 2020 fica 202003)
+
 cnes_webscraping <- function(estado,ibgeID,comp){
   
   if(!require(xml2)){
