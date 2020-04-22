@@ -49,4 +49,8 @@ estado <- 51
 ibgeID <- 510340
 comp <- 202003
 
-cnes_webscraping(estado,ibgeID,comp)
+tabela <- cnes_webscraping(estado,ibgeID,comp)
+
+# Caso tenha instalado o browser TOR e queira usa-lo.
+# options(browser="~/Tor Browser/Browser/firefox.exe")
+write.csv2(tabela,file="cnes_dados.csv",quote = F,row.names = F)
